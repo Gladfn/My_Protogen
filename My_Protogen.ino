@@ -4,14 +4,14 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~SETUP~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~╗
 //                                                                                                                        ║
 //                                                         Sprites                                                        ║
-#define mod_jaws 3 // Jaws: 3 - beautiful; 2 - standart; 1 - thin; 0 - type1;                                             ║4  options ╗
+#define mod_jaws 2 // Jaws: 3 - beautiful; 2 - standart; 1 - thin; 0 - type1;                                             ║4  options ╗
 #define mod_eye  0 // Eyes:  0-mk3; 1-ellipse; 2-classic; 3-triangular; 5-strange; 4-semicircular;                        ║12 options ║
                    //        5-strange; 6-squinted; 7-mk5; 8-unusual; 9-corner; 10-alt-squinted; 11-stripes;              ║           ║
 #define mod_nose 4 // Nostrils: 7-corner; 6-stripes; 5-round; 4-mk5-xl; 3-mk5; 2-mk3; 1-dots; 0-mini;                     ║8  options ║
-#define mod_owo  2 // Astonishment: 4-corner; 3-round1; 2-round2; 1-squinted; 0-animated heart                            ║5  options ║
-#define mod_zloy 3 // Angery eyes: 3-angry; 2-double eye; 1-round1; 0-round2;                                             ║4  options ╠═ total over 2.45 million combinations
+#define mod_owo  0 // Astonishment: 4-corner; 3-round1; 2-round2; 1-squinted; 0-animated heart                            ║5  options ║
+#define mod_zloy 2 // Angery eyes: 3-angry; 2-double eye; 1-round1; 0-round2;                                             ║4  options ╠═ total over 2.45 million combinations :p
 #define mod_kill 4 // Death eyes: 4-wide X; 3-squinted; 2-stripe; 1-X; 0-alt-squinted                                     ║5  options ║
-#define alt_owo  3 // Astonishment mouth: 3 - saw; 2 - stripe; 1 - oWo; 0 - the mouth does not change                     ║4  options ║
+#define alt_owo  1 // Astonishment mouth: 3 - saw; 2 - stripe; 1 - oWo; 0 - the mouth does not change                     ║4  options ║
 #define alt_ang  1 // Anger mouth: 3 - grin3; 2 - grin2; 1 - grin ; 0 - the mouth does not change                         ║4  options ║
 #define alt_kill 1 // Death mouth: 3 - stripe with tongue; 2 - stripe; 1 - classic; 0 - the mouth does not change         ║4  options ╝
 //                                                                                                                        ║
@@ -30,11 +30,11 @@ int mic = 7;       // The analog pin to which the microphone is connected.      
 int brt = 10;      // Brightness max7219 from 1 to 15 (When not working at full power, some matrices may squeak.          ║
 //                                                                                                                        ║
 //                                                     Matrix connection                                                  ║
-//                                                       VCC  ↔  Vin                                                      ║
-//                                ~~~~~~~~~~             GND  ↔  GND             ~~~~~~~~~~~                              ║
-//                                I Matrix I        DIN(SDI)  ↔  D11             I Arduino I                              ║
-//                                ~~~~~~~~~~              CS  ↔  D9              ~~~~~~~~~~~                              ║
-//                                                  CLK(SCL)  ↔  D13               (NANO)                                 ║
+//                                                       VCC  ↔  Vin                                                     ║
+//                                ~~~~~~~~~~             GND  ↔  GND             ~~~~~~~~~~~                             ║
+//                                I Matrix I        DIN(SDI)  ↔  D11             I Arduino I                             ║
+//                                ~~~~~~~~~~              CS  ↔  D9              ~~~~~~~~~~~                             ║
+//                                                  CLK(SCL)  ↔  D13               (NANO)                                ║
 //                                                                                                                        ║
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~SETUP~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~╝
 
@@ -1846,6 +1846,39 @@ const byte  dead_eyes[16] = {
   };
 #endif
 
+const byte bok[8] = {
+    B00000000,
+    B01100110,     
+    B11111111,
+    B11111111,
+    B01111110,
+    B00111100,
+    B00011000,
+    B00000000 
+};
+
+const byte kill_bok[8] = {
+    B11000011,
+    B11100111,     
+    B01111110,
+    B00111100,
+    B00111100,
+    B01111110,
+    B11100111,
+    B11000011 
+};
+
+const byte zlo_bok[8] = {
+    B00111100,
+    B01111110,     
+    B11100111,
+    B11000011,
+    B11000011,
+    B11100111,
+    B01111110,
+    B00111100 
+};
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 void setup()
 {
@@ -1862,21 +1895,21 @@ void loop()
         //Serial.println(gtv1);         //disabled to save arduino resources 
         //Serial.println(analogRead (mic)); //disabled to save arduino resources 
     }
-    // if (((analogRead (mic)) - gtv1) > (maxsnach - (analogRead (mic)))){
-    //     if (tim4I){
-    //          if (_isTimer(tim4P, 50)){
-    //             tim4O = 1;
-    //         }
-    //     }
-    //     else{
-    //         tim4I =1;
-    //         tim4P = millis();
-    //     }
-    // }
-    // else{
-    //     tim4O = 0;
-    //     tim4I = 0;
-    // }
+    if (((analogRead (mic)) - gtv1) > (maxsnach - (analogRead (mic)))){
+        if (tim4I){
+             if (_isTimer(tim4P, 50)){
+                tim4O = 1;
+            }
+        }
+        else{
+            tim4I =1;
+            tim4P = millis();
+        }
+    }
+    else{
+        tim4O = 0;
+        tim4I = 0;
+    }
     
     if (tim4O){
          if (! gen2I){
@@ -2183,17 +2216,17 @@ void loop()
         }
     }
     
-    // input =  (analogRead (mic));
-    // zamer = gen4O;
-    // if ((zamer) & (rot == 0)){
-    //     if (! temp){
-    //         temp =1;
-    //         newData(input) ;
-    //     }
-    // }
-    // else{
-    //      temp = 0;
-    // }
+    input =  (analogRead (mic));
+    zamer = gen4O;
+    if ((zamer) & (rot == 0)){
+        if (! temp){
+            temp =1;
+            newData(input) ;
+        }
+    }
+    else{
+         temp = 0;
+    }
     gtv1 = output;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Sprite Output 
@@ -2201,19 +2234,19 @@ void loop()
   if (blink == HIGH)
   {
     for ( m1 = 0; m1 < 4; m1++){
-    for (int y = 96; y < 112; y++){matrix.drawPixel(7-m1, y, LOW);}
-    for (int y = 96; y < 112; y++){matrix.drawPixel(0+m1, y, LOW);}
-    for (int y = 64; y < 80; y++) {matrix.drawPixel(7-m1, y, LOW);}
-    for (int y = 64; y < 80; y++) {matrix.drawPixel(0+m1, y, LOW);}
+    for (int y = 112; y < 128; y++){matrix.drawPixel(7-m1, y, LOW);}
+    for (int y = 112; y < 128; y++){matrix.drawPixel(0+m1, y, LOW);}
+    for (int y = 80; y < 96; y++) {matrix.drawPixel(7-m1, y, LOW);}
+    for (int y = 80; y < 96; y++) {matrix.drawPixel(0+m1, y, LOW);}
     matrix.write(); 
     delay(t);
     }
     for ( m1 = 0; m1 < 4; m1++){
     for (int y = 0; y < 16;y++){
-        matrix.drawPixel(3-m1, y+96, eyes[y] & (1 << 3-m1));
-        matrix.drawPixel(3-m1, 79-y, eyes[y] & (1 << 3-m1));
-        matrix.drawPixel(4+m1, y+96, eyes[y] & (1 << 4+m1));
-        matrix.drawPixel(4+m1, 79-y, eyes[y] & (1 << 4+m1));
+        matrix.drawPixel(3-m1, y+112, eyes[y] & (1 << 3-m1));
+        matrix.drawPixel(3-m1, 95-y, eyes[y] & (1 << 3-m1));
+        matrix.drawPixel(4+m1, y+112, eyes[y] & (1 << 4+m1));
+        matrix.drawPixel(4+m1, 95-y, eyes[y] & (1 << 4+m1));
     }
     matrix.write(); 
     delay(t);    
@@ -2224,16 +2257,18 @@ void loop()
 
   if (nos == HIGH){
     for (int y = 0; y < 8; y++) {
-      for (int x = 8; x >= 0; x--) {
-        matrix.drawPixel(x, y+80, nose[y] & (1 << x));
-        matrix.drawPixel(x, 95-y, nose[y] & (1 << x));
-    }}matrix.write();
+        for (int x = 8; x >= 0; x--) {
+            matrix.drawPixel(x, y+96, nose[y] & (1 << x));
+            matrix.drawPixel(x, 111-y, nose[y] & (1 << x));
+        }
+    }
+    matrix.write();
   }
   if (nos == LOW){
     for (int y = 8; y < 16; y++) {
       for (int x = 8; x >= 0; x--) {
-        matrix.drawPixel(x, y+80, nose[y] & (1 << x));
-        matrix.drawPixel(x, 95-y, nose[y] & (1 << x));
+        matrix.drawPixel(x, y+96, nose[y] & (1 << x));
+        matrix.drawPixel(x, 111-y, nose[y] & (1 << x));
     }}matrix.write();
   }
 
@@ -2241,39 +2276,45 @@ void loop()
 
  if (smile  == HIGH & zloy  == LOW & kill  == LOW){
     if (mod_owo == 0){
-    for (int y = 0+16*sprite_smile; y < 16+16*sprite_smile; y++) {
-      for (int x = 8; x >= 0; x--) {
-        matrix.drawPixel(x, y+96-16*sprite_smile, owo_eyes[y] & (1 << x));
-        matrix.drawPixel(x, 79+16*sprite_smile-y, owo_eyes[y] & (1 << x));
-    }
-    }
+        for (int y = 0+16*sprite_smile; y < 16+16*sprite_smile; y++) {
+            for (int x = 8; x >= 0; x--) {
+                matrix.drawPixel(x, y+112-16*sprite_smile, owo_eyes[y] & (1 << x));
+                matrix.drawPixel(x, 95+16*sprite_smile-y, owo_eyes[y] & (1 << x));
+            }
+        }
     }
     else{
-    for (int y = 0; y < 16; y++) {
-      for (int x = 8; x >= 0; x--) {
-        matrix.drawPixel(x, y+96, owo_eyes[y] & (1 << x));
-        matrix.drawPixel(x, 79-y, owo_eyes[y] & (1 << x));
-    }
-    }
+        for (int y = 0; y < 16; y++) {
+            for (int x = 8; x >= 0; x--) {
+                matrix.drawPixel(x, y+112, owo_eyes[y] & (1 << x));
+                matrix.drawPixel(x, 95-y, owo_eyes[y] & (1 << x));
+            }
+        }
     }
     if (alt_owo != 0){
-          for (int y = 0; y < 32; y++){
+        for (int y = 0; y < 32; y++){
             for (int x = 8; x >= 0; x--){
-              matrix.drawPixel(x, y, o[y] & (1 << x));
-              matrix.drawPixel(x, 63-y, o[y] & (1 << x));
+                matrix.drawPixel(x, y+8, o[y] & (1 << x));
+                matrix.drawPixel(x, 71-y, o[y] & (1 << x));
+            }
+        }
+        matrix.write();
+    }else{
+        for (int y = 32*rot; y < 32+32*rot; y++){
+            for (int x = 8; x >= 0; x--){
+                matrix.drawPixel(x, y+8-32*rot, jaws[y] & (1 << x));
+                matrix.drawPixel(x, 71+32*rot-y, jaws[y] & (1 << x));
+            }
+        }
+        matrix.write();
     }
+    for ( int y = 0; y < 8; y++ ) {
+        for ( int x = 0; x < 8; x++ ) {
+            matrix.drawPixel(y, x, bok[y] & (1<<x));
+            matrix.drawPixel(y, x+72, bok[y] & (1<<x));
+        }
     }
     matrix.write();
-    }
-        else{
-      for (int y = 32*rot; y < 32+32*rot; y++){
-        for (int x = 8; x >= 0; x--){
-          matrix.drawPixel(x, y-32*rot, jaws[y] & (1 << x));
-          matrix.drawPixel(x, 63+32*rot-y, jaws[y] & (1 << x));
-      }
-    }
-    matrix.write();
-    }
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -2282,26 +2323,33 @@ void loop()
     if (alt_kill  != 0){
     for (int y = 0; y < 64; y++){
       for (int x = 8; x >= 0; x--){
-         matrix.drawPixel(x, y, k[y] & (1 << x));
+         matrix.drawPixel(x, y+8, k[y] & (1 << x));
       }
     }
     }
     else{
       for (int y = 32*rot; y < 32+32*rot; y++){
         for (int x = 8; x >= 0; x--){
-          matrix.drawPixel(x, y-32*rot, jaws[y] & (1 << x));
-          matrix.drawPixel(x, 63+32*rot-y, jaws[y] & (1 << x));
+          matrix.drawPixel(x, y+8-32*rot, jaws[y] & (1 << x));
+          matrix.drawPixel(x, 71+32*rot-y, jaws[y] & (1 << x));
       }
     }
     matrix.write();
     }
     for (int y = 0; y < 16; y++){
       for (int x = 8; x >= 0; x--){
-          matrix.drawPixel(x, y+96, dead_eyes[y] & (1 << x));
-          matrix.drawPixel(x, 79-y, dead_eyes[y] & (1 << x));
+          matrix.drawPixel(x, y+112, dead_eyes[y] & (1 << x));
+          matrix.drawPixel(x, 95-y, dead_eyes[y] & (1 << x));
       }
     }    
   matrix.write();
+    for ( int y = 0; y < 8; y++ ) {
+        for ( int x = 0; x < 8; x++ ) {
+            matrix.drawPixel(y, x, kill_bok[y] & (1<<x));
+            matrix.drawPixel(y, x+72, kill_bok[y] & (1<<x));
+        }
+    }
+    matrix.write();
   }
   
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -2310,8 +2358,8 @@ void loop()
     if (alt_ang != 0){
       for (int y = 0; y < 32; y++){
         for (int x = 8; x >= 0; x--){
-          matrix.drawPixel(x, y, z[y] & (1 << x));
-          matrix.drawPixel(x, 63-y, z[y] & (1 << x));
+          matrix.drawPixel(x, y+8, z[y] & (1 << x));
+          matrix.drawPixel(x, 71-y, z[y] & (1 << x));
       }
     }
     matrix.write();
@@ -2319,19 +2367,26 @@ void loop()
     else{
       for (int y = 32*rot; y < 32+32*rot; y++){
         for (int x = 8; x >= 0; x--){
-          matrix.drawPixel(x, y-32*rot, jaws[y] & (1 << x));
-          matrix.drawPixel(x, 63+32*rot-y, jaws[y] & (1 << x));
+          matrix.drawPixel(x, y+8-32*rot, jaws[y] & (1 << x));
+          matrix.drawPixel(x, 71+32*rot-y, jaws[y] & (1 << x));
       }
     }
     matrix.write();
     }
     for (int y = 0; y < 16; y++){
       for (int x = 8; x >= 0; x--){
-        matrix.drawPixel(x, y+96, ang_eyes[y] & (1 << x));
-        matrix.drawPixel(x, 79-y, ang_eyes[y] & (1 << x));
+        matrix.drawPixel(x, y+112, ang_eyes[y] & (1 << x));
+        matrix.drawPixel(x, 95-y, ang_eyes[y] & (1 << x));
       }
     }
     matrix.write(); 
+    for ( int y = 0; y < 8; y++ ) {
+        for ( int x = 0; x < 8; x++ ) {
+            matrix.drawPixel(y, x, zlo_bok[y] & (1<<x));
+            matrix.drawPixel(y, x+72, zlo_bok[y] & (1<<x));
+        }
+    }
+    matrix.write();
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -2339,9 +2394,17 @@ void loop()
   if (zloy == LOW & kill == LOW & smile == LOW){
     for (int y = 32*rot; y < 32+32*rot; y++){
       for (int x = 8; x >= 0; x--){
-        matrix.drawPixel(x, y-32*rot, jaws[y] & (1 << x));
-        matrix.drawPixel(x, 63+32*rot-y, jaws[y] & (1 << x));
+        matrix.drawPixel(x, y+8-32*rot, jaws[y] & (1 << x));
+        matrix.drawPixel(x, 71+32*rot-y, jaws[y] & (1 << x));
       }
+    }
+    matrix.write();
+
+    for ( int y = 0; y < 8; y++ ) {
+        for ( int x = 0; x < 8; x++ ) {
+            matrix.drawPixel(y, x, bok[y] & (1<<x));
+            matrix.drawPixel(y, x+72, bok[y] & (1<<x));
+        }
     }
     matrix.write();
   }
